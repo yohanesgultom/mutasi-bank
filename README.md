@@ -1,20 +1,35 @@
 # Mutasi Bank
+Class ini berfungsi untuk mengambil data mutasi rekening bank di Indonesia (Bank Mandiri, BCA)
 
-Pustaka untuk mengambil data mutasi rekening bank online di Indonesia. Bank yang didukung:
+## Installation
+Install dengan composer:
 
-1. Bank Mandiri (sumber: https://github.com/ombapit/mutasi-bank)
-2. BCA (sumber: https://github.com/kadekjayak/bca-parser)
+	composer require ombapit/mutasi-bank
 
-Pustaka ini bergantung pada:
+##Requirements
+* PHP curl
+* PHP openssl
 
-* PHP >= 7.0
-* PHP Curl
-* PHP OpenSSL
-* PHP LibXML
 
-## Pengembangan
+## Example
+fungsi kelas ini cuma 2 yaitu Login, dan mengambil tabel data transaksi berdasarkan range tanggal tertentu
 
-Untuk mengembangkan, clone repository ini kemudian:
+### Login
+ketika class ini di di buat, secara otomatis ia akan login ke mandiri melalui CURL
+	
+	use MutasiBank\Mandiri;
+	$mb = new Mandiri('username', 'password');
+	
+### Mengambil Mutasi Rekening
+mengambil mutasi rekening dapat menggunakan method `getMutasiRekening` dengan parameter range tanggal transaksi yang diinginkan `getMutasiRekening(dari, sampai)`. Contoh :
+	
+	$html = $mb->getMutasiRekening('2019-01-01','2019-01-10');
 
-1. Instal dependencies `composer install`
-2. Pastikan unit test berhasil `vendor/bin/phpunit`
+method ini me return element html `<table>` yang berisikan daftar transaksi
+
+### Logout
+diakhir pengambilan mutasi, secara otomatis ia akan logout
+
+
+## Notes
+-

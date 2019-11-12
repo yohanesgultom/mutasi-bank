@@ -2,7 +2,7 @@
     "name": "ombapit/mutasi-bank",
     "description": "Scrapper untuk data mutasi bank di Indonesia",
     "type": "library",
-    "keywords": [ "php", "mutasi", "bank" ],
+    "keywords": [ "php", "mutasi", "bank", "mandiri", "bca" ],
     "license": "MIT",
     "authors": [
         {
