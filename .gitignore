@@ -1,2 +1,4 @@
 vendor
 cookiejar
+cookie
+*.cache

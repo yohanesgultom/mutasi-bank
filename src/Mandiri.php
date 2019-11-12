@@ -132,7 +132,7 @@ class Mandiri {
 	*
 	* @param string $from 'Y-m-d'
 	* @param string $to 'Y-m-d'
-	* @return string
+	* @return array
 	*/
 	public function getMutasiRekening($from, $to)
 	{
@@ -172,7 +172,12 @@ class Mandiri {
 		$html = $this->exec();
 
 		$this->logout();
-		return $this->getMutasiRekeningTable($html);
+		$str = $this->getMutasiRekeningTable($html);
+		if ($str == 'kosong') {
+			return [];
+		} else {
+			return $this->parseHtmlTable($str);
+		}
 	}
 
 	/**
@@ -207,4 +212,48 @@ class Mandiri {
 		curl_setopt( $this->curlHandle, CURLOPT_URL, $this->_defaultTargets['logoutAction'] );
 		return $this->exec();
 	}
+
+	/**
+	 * parseHtmlTable
+	 * 
+	 * Parse transaction HTML table into array
+	 * 
+	 * @return array
+	 */
+	public function parseHtmlTable($html)
+    {
+		$values = [];
+        libxml_use_internal_errors(true);
+		$doc = new \DOMDocument();		
+		try {
+			$doc->loadHTML($html);
+			$header_nodes = $doc->getElementsByTagName('tr')[0]->childNodes;
+			$rows = $doc->getElementsByTagName('tr');
+		
+			// get column names of the table
+			foreach($header_nodes as $node) {
+				$val = trim($node->textContent);
+				if (!empty($val)) {
+					$col_names[] = $val;
+				}
+			}
+		
+			// skip header
+			for ($i = 1; $i < count($rows); $i++) {
+				$col_ix = 0;
+				foreach($rows[$i]->childNodes as $node) {
+					$val = trim($node->textContent);
+					if (!empty($val)) {
+						$col_name = $col_names[$col_ix++];                
+						$values[$i - 1][$col_name] = $val;
+					}
+				}   
+			}
+		} catch (\Exception $e) {
+			// just return the string
+			$values = [$html];
+		}
+
+        return $values;
+    }
 }
